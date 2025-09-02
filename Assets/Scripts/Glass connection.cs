@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ExampleScript : MonoBehaviour
+public class Glassbreak: MonoBehaviour
 {
     private Rigidbody rb;
     [SerializeField] private float Speed = 10f; 
