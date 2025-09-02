@@ -1,29 +1,35 @@
 using UnityEngine;
 
-public class Glassbreak: MonoBehaviour
+public class GlassBreaker : MonoBehaviour
 {
-    private Rigidbody rb;
-    [SerializeField] private float Speed = 10f; 
+    [SerializeField]private Rigidbody[] GlassPieces;
+    public float Speed = 12f; // example starting speed
 
     void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
- 
 
-        rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true;  
-        rb.useGravity = false;  
+        GlassPieces = GetComponentsInChildren<Rigidbody>();
+
+        foreach (Rigidbody piece in GlassPieces)
+        {
+            piece.isKinematic = true;
+            piece.useGravity = false;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
-        {     
+        {
             if (Speed >= 10f)
             {
                 Speed -= 2f;
-                rb.isKinematic = false;
-                rb.useGravity = true;
+                foreach (Rigidbody piece in GlassPieces)
+                {
+                    piece.isKinematic = false;
+                    piece.useGravity = true;
+                }
+             Object.Destroy(gameObject, 4f);
             }
             else
             {
