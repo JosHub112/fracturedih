@@ -1,67 +1,162 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))]
 public class RagdollDrag : MonoBehaviour
 {
     [Header("Slingshot Settings")]
-    public Transform slingshotAnchor;   // Where the projectile is held before release
-    public float maxStretch = 5f;       // Max distance you can pull
+    public Transform slingshotAnchor;   // fallback: this.transform
+    public float maxStretch = 5f;
     public float launchForceMultiplier = 50f;
 
     private Rigidbody rb;
     private bool isDragging = false;
     private Vector3 dragStartPos;
+    private float planeHeight;
+    private Camera mainCam;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true; // Hold still until launched
+        if (rb == null)
+        {
+            Debug.LogError("RagdollDrag: geen Rigidbody gevonden!");
+            enabled = false;
+            return;
+        }
+
+        if (GetComponent<Collider>() == null)
+        {
+            Debug.LogError("RagdollDrag: geen Collider gevonden! OnMouse events werken alleen met een Collider.");
+            enabled = false;
+            return;
+        }
+
+        if (slingshotAnchor == null) slingshotAnchor = transform;
+
+        rb.isKinematic = true;
+        mainCam = Camera.main;
+        if (mainCam == null)
+        {
+            Debug.LogWarning("RagdollDrag: Camera.main is null. Zorg dat je camera de tag 'MainCamera' heeft.");
+        }
     }
 
-    void OnMouseDown()
+    void Update()
+    {
+        // Deze helper-methodes bestaan en worden aangeroepen -> voorkomt 'does not exist' errors
+        HandleMouseInput();
+        HandleTouchInput();
+    }
+
+    // --- Input helpers (zorg dat deze namen bestaan!) ---
+    void HandleMouseInput()
+    {
+        if (mainCam == null) mainCam = Camera.main;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            // optioneel: controleer of we op dit object klikken (raycast)
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                if (hit.collider != null && hit.collider.gameObject == gameObject)
+                {
+                    BeginDrag();
+                }
+            }
+        }
+        else if (Input.GetMouseButton(0) && isDragging)
+        {
+            Vector3 world = GetMouseWorldPositionOnPlane(Input.mousePosition, planeHeight);
+            ContinueDrag(world);
+        }
+        else if (Input.GetMouseButtonUp(0) && isDragging)
+        {
+            EndDragAndLaunch();
+        }
+    }
+
+    void HandleTouchInput()
+    {
+        if (Input.touchCount == 0 || mainCam == null) return;
+
+        Touch t = Input.GetTouch(0);
+        if (t.phase == TouchPhase.Began)
+        {
+            Ray ray = mainCam.ScreenPointToRay(t.position);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                if (hit.collider != null && hit.collider.gameObject == gameObject)
+                {
+                    BeginDrag();
+                }
+            }
+        }
+        else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && isDragging)
+        {
+            Vector3 world = GetMouseWorldPositionOnPlane(t.position, planeHeight);
+            ContinueDrag(world);
+        }
+        else if ((t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled) && isDragging)
+        {
+            EndDragAndLaunch();
+        }
+    }
+
+    // --- Drag lifecycle ---
+    void BeginDrag()
     {
         isDragging = true;
         dragStartPos = slingshotAnchor.position;
+        planeHeight = dragStartPos.y;
+        rb.isKinematic = true;
+        Debug.Log("RagdollDrag: begin drag");
     }
 
-    void OnMouseDrag()
+    void ContinueDrag(Vector3 worldPoint)
     {
-        if (!isDragging) return;
-
-        // Convert mouse position to world point
-        Vector3 mouseWorldPoint = GetMouseWorldPosition();
-
-        // Calculate pull direction & clamp stretch
-        Vector3 pullVector = mouseWorldPoint - dragStartPos;
+        Vector3 pullVector = worldPoint - dragStartPos;
+        pullVector.y = 0f; // houd op anchor-level (optioneel)
         if (pullVector.magnitude > maxStretch)
-        {
             pullVector = pullVector.normalized * maxStretch;
-        }
 
-        // Move projectile to dragged position
-        transform.position = dragStartPos + pullVector;
+        Vector3 target = dragStartPos + pullVector;
+        transform.position = target;
     }
 
-    void OnMouseUp()
+    void EndDragAndLaunch()
     {
-        if (!isDragging) return;
-
         isDragging = false;
         rb.isKinematic = false;
 
-        // Launch projectile (opposite of pull direction)
         Vector3 launchDirection = (dragStartPos - transform.position);
-        rb.AddForce(launchDirection * launchForceMultiplier, ForceMode.Impulse);
+        if (launchDirection.sqrMagnitude < 0.0001f)
+        {
+            Debug.Log("RagdollDrag: weinig stretch, geen launch.");
+            return;
+        }
+
+        Vector3 impulse = launchDirection * launchForceMultiplier;
+        // reset velocity voor consistente resultaten
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        rb.AddForce(impulse, ForceMode.Impulse);
+        Debug.Log($"RagdollDrag: Gelanceerd, impulse: {impulse}");
     }
 
-    Vector3 GetMouseWorldPosition()
+    // --- Hulpfunctie ---
+    Vector3 GetMouseWorldPositionOnPlane(Vector3 screenPos, float y)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new Plane(Vector3.up, Vector3.zero); // ground plane (Y = 0)
-        float distance;
-        if (plane.Raycast(ray, out distance))
+        if (mainCam == null) mainCam = Camera.main;
+        if (mainCam == null) return Vector3.zero;
+
+        Ray ray = mainCam.ScreenPointToRay(screenPos);
+        Plane plane = new Plane(Vector3.up, new Vector3(0f, y, 0f));
+        if (plane.Raycast(ray, out float enter))
         {
-            return ray.GetPoint(distance);
+            return ray.GetPoint(enter);
         }
         return Vector3.zero;
     }
