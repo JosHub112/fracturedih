@@ -17,11 +17,8 @@ public class Glassbreak: MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if we collided with the Player
         if (collision.gameObject.CompareTag("Player"))
         {     
-
-            // Adjust player's speed
             if (Speed >= 10f)
             {
                 Speed -= 2f;
