@@ -17,6 +17,9 @@ public class WormSlingshot3D : MonoBehaviour
     [SerializeField] private float airDrag = 0.5f;
     [SerializeField] private float currentSpeed;
 
+    [Header("Throw Settings")]
+    [SerializeField] private float height = 2f; 
+
     [Header("Death Settings")]
     [SerializeField] private float deathLaunchForce = 20f;
     [SerializeField] private float destroyDelay = 2f;
@@ -159,6 +162,8 @@ public class WormSlingshot3D : MonoBehaviour
         rb.linearDamping = airDrag;
         rb.AddForce(launchDirection * finalForce, ForceMode.VelocityChange);
 
+        transform.position += Vector3.up * height;
+
         if (launchClip != null && audioSource != null)
             audioSource.PlayOneShot(launchClip, launchVolume);
 
@@ -198,17 +203,14 @@ public class WormSlingshot3D : MonoBehaviour
     {
         isDead = true;
 
-        // Play death sound
         if (deathClip != null && audioSource != null)
             audioSource.PlayOneShot(deathClip, deathVolume);
 
-        // Launch into sky
         rb.isKinematic = false;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.AddForce(Vector3.up * deathLaunchForce, ForceMode.VelocityChange);
 
-        // Destroy after delay
         Destroy(gameObject, destroyDelay);
     }
 }
