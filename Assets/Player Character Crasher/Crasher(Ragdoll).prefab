@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 9.4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.1
+      value: 4.83
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       propertyPath: m_LocalRotation.w
@@ -70,11 +70,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       propertyPath: m_Name
-      value: Crasher
+      value: Crasher(Ragdoll)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2358550314529288259, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       propertyPath: m_Name
       value: Bone_Head_end
+      objectReference: {fileID: 0}
+    - target: {fileID: 7179158139332175658, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -86,6 +94,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7179158139332175658, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6527838879196177622}
+    - targetCorrespondingSourceObject: {fileID: 7179158139332175658, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1660175619032806474}
     - targetCorrespondingSourceObject: {fileID: -842113545036642151, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5015211333470467822}
@@ -632,6 +643,35 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1660175619032806474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399891580807969177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5c880bbd46990e46966430ec617e20e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WormSlingshot3D
+  maxStretch: 6
+  launchForceMultiplier: 30
+  maxLaunchForce: 75
+  stopThreshold: 0.05
+  stopAngularThreshold: 0.1
+  restDuration: 0.15
+  lives: 3
+  speed: 1
+  airDrag: 0.2
+  currentSpeed: 0
+  height: 4
+  deathLaunchForce: 20
+  destroyDelay: 2
+  launchClip: {fileID: 0}
+  deathClip: {fileID: 0}
+  launchVolume: 1
+  deathVolume: 1
 --- !u!1 &1878438075722269916 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7700481128315968111, guid: 2e7a8ec21a48707479eb76380123b892, type: 3}

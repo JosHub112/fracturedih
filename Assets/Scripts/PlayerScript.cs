@@ -3,7 +3,8 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Collider))]
-public class WormSlingshot3D : MonoBehaviour
+[RequireComponent(typeof(AudioSource))]
+public class PlayerControls: MonoBehaviour
 {
     [Header("Slingshot Settings")]
     [SerializeField] private float maxStretch = 5f;
@@ -18,7 +19,7 @@ public class WormSlingshot3D : MonoBehaviour
     [SerializeField] private float currentSpeed;
 
     [Header("Throw Settings")]
-    [SerializeField] private float height = 2f; 
+    [SerializeField] private float height = 2f;
 
     [Header("Death Settings")]
     [SerializeField] private float deathLaunchForce = 20f;
@@ -32,6 +33,7 @@ public class WormSlingshot3D : MonoBehaviour
 
     private Camera mainCam;
     private Rigidbody rb;
+    private Collider col;
     private Vector3 slingshotAnchor;
     private Vector3 dragStartPos;
     private bool isDragging;
@@ -55,6 +57,10 @@ public class WormSlingshot3D : MonoBehaviour
         set
         {
             lives = Mathf.Max(0, value);
+
+            // Update UI via GameManager if available
+            GameManager.Instance?.UpdateLivesUI(lives);
+
             if (lives == 0 && !isDead)
                 Die();
         }
@@ -64,16 +70,22 @@ public class WormSlingshot3D : MonoBehaviour
     {
         mainCam = Camera.main;
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
         slingshotAnchor = transform.position;
 
+        // keep original damping if used in your project (you used linearDamping previously)
         originalDrag = rb.linearDamping;
         rb.isKinematic = true;
 
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
 
         if (mainCam == null)
             Debug.LogWarning("WormSlingshot3D: Camera.main is null. Make sure the camera has tag 'MainCamera'.");
+
+        // Ensure UI shows current lives at start
+        GameManager.Instance?.UpdateLivesUI(lives);
     }
 
     void Update()
@@ -168,7 +180,7 @@ public class WormSlingshot3D : MonoBehaviour
             audioSource.PlayOneShot(launchClip, launchVolume);
 
         canSlingshot = false;
-        Lives--; // use property so death triggers
+        Lives--; // use property so death triggers and UI updates
         restTimer = 0f;
     }
 
@@ -206,11 +218,24 @@ public class WormSlingshot3D : MonoBehaviour
         if (deathClip != null && audioSource != null)
             audioSource.PlayOneShot(deathClip, deathVolume);
 
+        // notify manager (optional but useful)
+        GameManager.Instance?.OnPlayerDied();
+
+        // Disable input/collider so the body can't be re-shot or collide oddly
+        canSlingshot = false;
+        if (col != null) col.enabled = false;
+
         rb.isKinematic = false;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.AddForce(Vector3.up * deathLaunchForce, ForceMode.VelocityChange);
 
         Destroy(gameObject, destroyDelay);
+    }
+
+    public void KillByTimer()
+    {
+        if (!isDead)
+            Lives = 0;
     }
 }

@@ -6,39 +6,43 @@ using System.Collections;
 public class Menu : MonoBehaviour
 {
     [Tooltip("Optional: full-screen black Image used for fade. Leave empty for instant switch.")]
-    public Image fadeImage;
+    [SerializeField] private Image fadeImage;
     [Tooltip("Seconds for the fade out")]
-    public float fadeDuration = 0.8f;
+    [SerializeField] private float fadeDuration = 0.8f;
 
-    // Called by your button OnClick()
+    // Set this in the Inspector or change the value below
+    [SerializeField] private int targetSceneIndex = 1;
+
+    // Hook this to your Button's OnClick()
     public void GoToSelect()
     {
         if (fadeImage != null)
-            StartCoroutine(FadeAndLoad("Select"));
+            StartCoroutine(FadeAndLoad(targetSceneIndex));
         else
-            SceneManager.LoadScene("Select");
+            SceneManager.LoadScene(targetSceneIndex);
     }
 
-    private IEnumerator FadeAndLoad(string sceneName)
+    private IEnumerator FadeAndLoad(int sceneIndex)
     {
-        // ensure image is enabled and starts transparent
+        // Ensure overlay exists, is enabled, and starts fully transparent
         fadeImage.gameObject.SetActive(true);
-        Color c = fadeImage.color;
+        var c = fadeImage.color;
+        c.a = 0f;
+        fadeImage.color = c;
+
         float t = 0f;
-        float start = c.a;
         while (t < fadeDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime; // works even if timeScale == 0
             float blend = Mathf.Clamp01(t / fadeDuration);
-            c.a = Mathf.Lerp(start, 1f, blend);
+            c.a = Mathf.Lerp(0f, 1f, blend);
             fadeImage.color = c;
             yield return null;
         }
 
-        // final ensure
         c.a = 1f;
         fadeImage.color = c;
 
-        SceneManager.LoadScene(sceneName);
+        yield return SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
     }
 }

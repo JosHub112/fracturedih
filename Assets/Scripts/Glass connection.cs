@@ -10,13 +10,13 @@ public class GlassBreaker : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip breakClip;
     [SerializeField][Range(0f, 1f)] private float breakVolume = 1f;
-    [SerializeField]WormSlingshot3D player;
+    [SerializeField] PlayerControls player;
 
     private AudioSource audioSource;
 
     void Start()
     {
-        player = GameObject.FindWithTag("Player").GetComponent<WormSlingshot3D>();
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerControls>();
         GlassPieces = GetComponentsInChildren<Rigidbody>();
         Collider = GetComponent<Collider>();
         foreach (Rigidbody piece in GlassPieces)
@@ -33,9 +33,8 @@ public class GlassBreaker : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (Speed >= 5f)
-            {
-                Speed -= 2f;
+
+
 
                 if (breakClip != null && audioSource != null)
                     audioSource.PlayOneShot(breakClip, breakVolume);
@@ -47,11 +46,6 @@ public class GlassBreaker : MonoBehaviour
                     if (Collider != null) Collider.enabled = false;
                 }
                 Object.Destroy(gameObject, 4f);
-            }
-            else
-            {
-                Speed = 0f;
-            }
         }
     }
 }
