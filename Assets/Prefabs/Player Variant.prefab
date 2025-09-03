@@ -8,17 +8,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1660175619032806474, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
+      propertyPath: deathClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6c6bee3662bebf241b86d039bdce6b08, type: 3}
+    - target: {fileID: 1660175619032806474, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
+      propertyPath: launchClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 59802a45c58b2104784f267d66848a1b, type: 3}
+    - target: {fileID: 3759101895830876113, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272737817697844597, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 8594749142052157784, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -21.79117
       objectReference: {fileID: 0}
     - target: {fileID: 8594749142052157784, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.35695
       objectReference: {fileID: 0}
     - target: {fileID: 8594749142052157784, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.83
+      value: 12.73731
       objectReference: {fileID: 0}
     - target: {fileID: 8594749142052157784, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -47,6 +63,10 @@ PrefabInstance:
     - target: {fileID: 8594749142052157784, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674399766323803570, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8938939796167648226, guid: 67d6862f35750ac45bec09769a13778e, type: 3}
       propertyPath: m_Name
