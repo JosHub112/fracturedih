@@ -1,32 +1,52 @@
 using UnityEngine;
 
-public class ExampleScript : MonoBehaviour
+public class GlassBreaker : MonoBehaviour
 {
-    private Rigidbody rb;
-    [SerializeField] private float Speed = 10f; 
+    [SerializeField] private Rigidbody[] GlassPieces;
+    public float Speed = 12f;
+    private Collider Collider;
+    private int score;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip breakClip;
+    [SerializeField][Range(0f, 1f)] private float breakVolume = 1f;
+    [SerializeField]WormSlingshot3D player;
+
+    private AudioSource audioSource;
 
     void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
- 
+        player = GameObject.FindWithTag("Player").GetComponent<WormSlingshot3D>();
+        GlassPieces = GetComponentsInChildren<Rigidbody>();
+        Collider = GetComponent<Collider>();
+        foreach (Rigidbody piece in GlassPieces)
+        {
+            piece.isKinematic = true;
+            piece.useGravity = false;
+        }
 
-        rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true;  
-        rb.useGravity = false;  
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if we collided with the Player
         if (collision.gameObject.CompareTag("Player"))
-        {     
-
-            // Adjust player's speed
-            if (Speed >= 10f)
+        {
+            if (Speed >= 5f)
             {
                 Speed -= 2f;
-                rb.isKinematic = false;
-                rb.useGravity = true;
+
+                if (breakClip != null && audioSource != null)
+                    audioSource.PlayOneShot(breakClip, breakVolume);
+
+                foreach (Rigidbody piece in GlassPieces)
+                {
+                    piece.isKinematic = false;
+                    piece.useGravity = true;
+                    if (Collider != null) Collider.enabled = false;
+                }
+                Object.Destroy(gameObject, 4f);
             }
             else
             {

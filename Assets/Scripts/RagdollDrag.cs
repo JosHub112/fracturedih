@@ -16,12 +16,15 @@ public class RagdollDrag : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true; // Hold still until launched
+
+        GameObject anchorpoint = GameObject.FindGameObjectWithTag("Anchor");
     }
 
     void OnMouseDown()
     {
         isDragging = true;
         dragStartPos = slingshotAnchor.position;
+        Debug.Log("mouse being held down");
     }
 
     void OnMouseDrag()
