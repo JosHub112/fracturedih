@@ -29,13 +29,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string gameOverSceneName = "GameOver";
     [SerializeField] private float delayBeforeGameOver = 1f;
 
+    [Header("Music per Level")]
+    [Tooltip("Assign 1 music track per level build index (same order as in Build Settings). Leave empty if no music.")]
+    [SerializeField] private AudioClip level1Music;
+    [SerializeField] private AudioClip level2Music;
+    [SerializeField] private AudioClip level3Music;
+    [SerializeField] private AudioClip level4Music;
+
+    private AudioSource musicSource;
+
     // Event other systems can subscribe to (optional)
     public event Action OnPlayerDiedEvent;
 
     private float currentTimer;
     private bool timerRunning;
 
-    // Support both player script types: PlayerControls (your new type) or WormSlingshot3D (older player)
     private PlayerControls playerControls;
     private PlayerControls wormPlayer;
 
@@ -47,6 +55,11 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
+
+            // Setup music source
+            musicSource = gameObject.AddComponent<AudioSource>();
+            musicSource.loop = true;
+            musicSource.playOnAwake = false;
         }
         else
         {
@@ -58,7 +71,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         FindPlayerRefs();
-        // show initial lives value
         if (playerControls != null)
             UpdateLivesUI(playerControls.Lives);
         else if (wormPlayer != null)
@@ -71,6 +83,10 @@ public class GameManager : MonoBehaviour
     {
         FindPlayerRefs();
 
+        // Handle music
+        PlayLevelMusic(scene.buildIndex);
+
+        // Handle timers
         switch (scene.buildIndex)
         {
             case 2:
@@ -83,7 +99,6 @@ public class GameManager : MonoBehaviour
                 StartLevel(level4Time);
                 break;
             default:
-                // Not a timed level
                 timerRunning = false;
                 currentTimer = 0f;
                 UpdateTimerUI();
@@ -94,7 +109,6 @@ public class GameManager : MonoBehaviour
     private void FindPlayerRefs()
     {
         playerControls = FindObjectOfType<PlayerControls>();
-
     }
 
     private void StartLevel(float timeLimit)
@@ -102,7 +116,6 @@ public class GameManager : MonoBehaviour
         currentTimer = timeLimit;
         timerRunning = true;
 
-        // Give the player their starting lives (if found)
         FindPlayerRefs();
 
         if (playerControls != null)
@@ -143,10 +156,9 @@ public class GameManager : MonoBehaviour
         Debug.Log("GameManager: Level timer expired.");
         if (killPlayerOnTimeUp)
         {
-            // Prefer PlayerControls, fallback to WormSlingshot3D
             if (playerControls != null)
             {
-                playerControls.KillByTimer(); // kills player (Lives = 0)
+                playerControls.KillByTimer();
             }
             else if (wormPlayer != null)
             {
@@ -157,20 +169,12 @@ public class GameManager : MonoBehaviour
                 Debug.LogWarning("GameManager: No player found to kill when timer expired.");
             }
         }
-        // Additional behaviors on time up could be added here
     }
 
-    /// <summary>
-    /// Called by the player when they die (or by other systems). Stops timer and optionally loads GameOver.
-    /// Players should call GameManager.Instance?.OnPlayerDied() when they die.
-    /// </summary>
     public void OnPlayerDied()
     {
         Debug.Log("GameManager: Player died notification received.");
-        // Stop timer so it doesn't keep counting negative etc.
         timerRunning = false;
-
-        // Broadcast to any listeners
         OnPlayerDiedEvent?.Invoke();
 
         if (loadGameOverSceneOnDeath)
@@ -203,13 +207,31 @@ public class GameManager : MonoBehaviour
             timerText.text = $"Time: {FormatTime(currentTimer)}";
     }
 
-    // Formats seconds to MM:SS
     private string FormatTime(float seconds)
     {
         seconds = Mathf.Max(0f, seconds);
         int mins = Mathf.FloorToInt(seconds / 60f);
         int secs = Mathf.FloorToInt(seconds % 60f);
         return $"{mins}:{secs:00}";
+    }
+
+    private void PlayLevelMusic(int buildIndex)
+    {
+        AudioClip clipToPlay = null;
+
+        switch (buildIndex)
+        {
+            case 1: clipToPlay = level1Music; break;
+            case 2: clipToPlay = level2Music; break;
+            case 3: clipToPlay = level3Music; break;
+            case 4: clipToPlay = level4Music; break;
+        }
+
+        if (clipToPlay != null && musicSource.clip != clipToPlay)
+        {
+            musicSource.clip = clipToPlay;
+            musicSource.Play();
+        }
     }
 
     private void OnDestroy()

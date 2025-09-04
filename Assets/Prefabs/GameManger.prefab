@@ -46,11 +46,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   timerText: {fileID: 0}
   livesText: {fileID: 0}
-  level2Time: 60
-  level3Time: 90
-  level4Time: 120
-  defaultLives: 30
+  level2Time: 200
+  level3Time: 240
+  level4Time: 200
+  defaultLives: 60
   killPlayerOnTimeUp: 1
-  loadGameOverSceneOnDeath: 0
-  gameOverSceneName: GameOver
+  loadGameOverSceneOnDeath: 1
+  gameOverSceneName: Menu
   delayBeforeGameOver: 1
+  level1Music: {fileID: 8300000, guid: 5b1f9b07c10b50148a92560f5a5b825b, type: 3}
+  level2Music: {fileID: 8300000, guid: f61cfb7841a5a85459f41082b0981f5b, type: 3}
+  level3Music: {fileID: 8300000, guid: 7dccbf6cb5a6da2498960cf2c4f68efd, type: 3}
+  level4Music: {fileID: 8300000, guid: ff3fa75678be5e6449a36c96953797f9, type: 3}

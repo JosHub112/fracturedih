@@ -544,6 +544,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 639479900631717750, guid: bfcbc52d74062cd418b1fb038d23fbb7, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 4681947798498974533, guid: bfcbc52d74062cd418b1fb038d23fbb7, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7194708330403447006, guid: bfcbc52d74062cd418b1fb038d23fbb7, type: 3}
+      propertyPath: maxStretch
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7194708330403447006, guid: bfcbc52d74062cd418b1fb038d23fbb7, type: 3}
+      propertyPath: stopThreshold
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7194708330403447006, guid: bfcbc52d74062cd418b1fb038d23fbb7, type: 3}
+      propertyPath: maxLaunchForce
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7194708330403447006, guid: bfcbc52d74062cd418b1fb038d23fbb7, type: 3}
+      propertyPath: launchForceMultiplier
+      value: 40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -669,14 +693,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7266463732917643874, guid: 1f8ebc562d8f9cb4da0187e4fd95a5c5, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 158.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7266463732917643874, guid: 1f8ebc562d8f9cb4da0187e4fd95a5c5, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 267.91
-      objectReference: {fileID: 0}
     - target: {fileID: 7266463732917643874, guid: 1f8ebc562d8f9cb4da0187e4fd95a5c5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.4
@@ -1091,6 +1107,7 @@ GameObject:
   - component: {fileID: 2078452996}
   - component: {fileID: 2078452995}
   - component: {fileID: 2078452994}
+  - component: {fileID: 2078453006}
   m_Layer: 0
   m_Name: Walls
   m_TagString: Untagged
@@ -1344,6 +1361,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2078453006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2078452993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eaf25e09d85cdb429c04b4157e71e19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1001 &237517606684192842
 PrefabInstance:
   m_ObjectHideFlags: 0
